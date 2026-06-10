@@ -58,3 +58,74 @@
         wrapper.appendChild(table);
     });
 })();
+
+/* back to top button */
+(function() {
+    const scrollTopBtn = document.querySelector('.js-scroll-top');
+    if (scrollTopBtn) {
+        scrollTopBtn.onclick = () => {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+        
+        const progressPath = document.querySelector('.progress-circle path');
+        const pathLength = progressPath.getTotalLength();
+        progressPath.style.transition = progressPath.style.WebkitTransition = 'none';
+        progressPath.style.strokeDasharray = `${pathLength} ${pathLength}`;
+        progressPath.style.strokeDashoffset = pathLength;
+        progressPath.getBoundingClientRect();
+        progressPath.style.transition = progressPath.style.WebkitTransition = 'stroke-dashoffset 10ms linear';		
+        const updateProgress = function() {
+            const mainEl = document.getElementsByTagName('main')[0];
+            const windowHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+            const mainTop = mainEl.getBoundingClientRect().top + window.scrollY
+            const mainBottom = mainTop + mainEl.offsetHeight
+
+            const scrollStart = mainTop;
+            const scrollEnd = mainBottom - windowHeight;
+
+            const scroll = window.scrollY || 0;
+
+            const clampedScroll = Math.min(Math.max(scroll, scrollStart), scrollEnd)
+            const progress = (clampedScroll - scrollStart) / (scrollEnd - scrollStart)
+            progressPath.style.strokeDashoffset = pathLength - (progress * pathLength)
+        }
+
+        updateProgress();
+        const offset = 100;
+
+        window.addEventListener('scroll', function(event) {
+            updateProgress();
+
+            const scrollPos = window.scrollY || window.scrollTopBtn || document.getElementsByTagName('html')[0].scrollTopBtn;
+            if(scrollPos > offset){
+                scrollTopBtn.classList.add('is-active')
+            } else {
+                scrollTopBtn.classList.remove('is-active')    
+            }
+
+        }, false);
+    }
+})();
+
+/* show/hide sticky nav on scoll */
+(function () {
+    const stickyHeader = document.querySelector('.hide-on-scroll')
+    if(stickyHeader){
+        var prevScrollPosition = window.pageYOffset;
+        window.onscroll = function() {
+            var currentScrollPosition = window.pageYOffset;
+            // dont hide the header until the user has reached the main content
+            const mainContentPosition = document.getElementsByTagName('main')[0].getBoundingClientRect().top
+            if(mainContentPosition > 150) return;
+            if(prevScrollPosition > currentScrollPosition){
+                stickyHeader.style.top = "0";
+            } else {
+                // dont move header up when in mobile. it hides the close button.
+                if(stickyHeader.classList.contains("is-open")) return;
+                stickyHeader.style.top = "-100px";
+            }
+            prevScrollPosition = currentScrollPosition;
+        }
+    } 
+})();
