@@ -2783,6 +2783,7 @@ body[class*=" gh-font-heading"]:not(.gh-font-heading-fira-sans):not(.gh-font-hea
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-rows: auto 1fr;
+    align-items: center;
     gap: 3rem;
     padding-block: 28px;
     font-weight: 550;
